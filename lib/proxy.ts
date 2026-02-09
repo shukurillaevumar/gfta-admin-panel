@@ -7,7 +7,7 @@ if (!API_URL) {
   throw new Error("Missing API_URL in .env.local");
 }
 
-function joinUrl(base: string, path: string) {
+function joinUrl(base: any, path: string) {
   const b = base.replace(/\/+$/, "");
   const p = path.startsWith("/") ? path : `/${path}`;
   return `${b}${p}`;
