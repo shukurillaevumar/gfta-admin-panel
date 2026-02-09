@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { apiPost } from "@/lib/api";
 
 type LoginState = "idle" | "loading" | "error";
 
@@ -18,35 +19,34 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   const canSubmit =
-    email.trim().length > 3 && password.length >= 6 && state !== "loading";
+    email.trim().length > 3 && password.length >= 8 && state !== "loading";
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setState("loading");
 
-    // TODO: подключим реальный API
-    // POST /auth/login -> { accessToken } + сохранить в cookie/localStorage (решим позже)
-    await new Promise((r) => setTimeout(r, 650));
+    try {
+      await apiPost<{ user: { id: string; email: string } }>(
+        "/api/auth/login",
+        {
+          email,
+          password,
+        },
+      );
 
-    // Мок "успешного входа"
-    const ok = email.includes("@") && password.length >= 6;
-
-    if (!ok) {
+      setState("idle");
+      router.push(next);
+    } catch (err: any) {
       setState("error");
-      setError("Неверный email или пароль. Люди продолжают путать это годами.");
-      return;
+      setError(err?.message || "Login failed");
     }
-
-    setState("idle");
-    router.push(next);
   }
 
   return (
     <main className="min-h-screen bg-[#F5F6F7] text-[#2B2E33]">
       <div className="mx-auto grid min-h-screen max-w-6xl items-center px-4 py-10 md:px-8">
         <div className="grid gap-10 md:grid-cols-2 md:items-center">
-          {/* Left */}
           <div className="space-y-5">
             <div className="inline-flex items-center gap-2 rounded-2xl border border-white/40 bg-white/35 px-4 py-2 shadow-[0_18px_50px_rgba(43,46,51,0.10)] backdrop-blur-xl">
               <span className="h-3 w-3 rounded-full bg-[#2B2E33]" />
@@ -78,7 +78,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Right: Form */}
           <div className="rounded-[28px] border border-white/55 bg-white/40 p-6 shadow-[0_20px_80px_rgba(43,46,51,0.14)] backdrop-blur-2xl md:p-8">
             <div className="mb-6">
               <h2 className="text-2xl font-extrabold">Авторизация</h2>
