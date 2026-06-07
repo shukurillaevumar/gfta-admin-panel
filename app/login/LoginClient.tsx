@@ -6,6 +6,10 @@ import { apiPost } from "@/lib/api";
 
 type LoginState = "idle" | "loading" | "error";
 
+function getErrorMessage(err: unknown, fallback: string) {
+  return err instanceof Error ? err.message : fallback;
+}
+
 export default function LoginClient() {
   const router = useRouter();
   const params = useSearchParams();
@@ -37,79 +41,100 @@ export default function LoginClient() {
 
       setState("idle");
       router.push(next);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setState("error");
-      setError(err?.message || "Login failed");
+      setError(getErrorMessage(err, "Не удалось войти"));
     }
   }
 
   return (
-    <main className="min-h-screen bg-[#F5F6F7] text-[#2B2E33]">
+    <main className="app-shell min-h-screen">
       <div className="mx-auto grid min-h-screen max-w-6xl items-center px-4 py-10 md:px-8">
-        <div className="grid gap-10 md:grid-cols-2 md:items-center">
-          <div className="space-y-5">
-            <div className="inline-flex items-center gap-2 rounded-2xl border border-white/40 bg-white/35 px-4 py-2 shadow-[0_18px_50px_rgba(43,46,51,0.10)] backdrop-blur-xl">
-              <span className="h-3 w-3 rounded-full bg-[#2B2E33]" />
-              <span className="text-base font-semibold tracking-tight">
-                GFTA Admin Panel
-              </span>
+        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div className="space-y-7">
+            <div className="flex items-center gap-3">
+              <div className="grid h-11 w-11 place-items-center rounded-xl bg-[#17191d] text-sm font-black text-white">
+                G
+              </div>
+              <div>
+                <div className="text-xl font-black tracking-tight">
+                  GFTA Admin
+                </div>
+                <div className="text-sm font-semibold text-[#68707d]">
+                  Secure operations console
+                </div>
+              </div>
             </div>
 
-            <h1 className="text-4xl font-extrabold leading-tight md:text-5xl">
-              Вход в админку
+            <h1 className="text-4xl font-black leading-tight tracking-tight md:text-5xl">
+              Вход в панель управления
             </h1>
 
-            <div className="rounded-3xl border border-white/50 bg-white/35 p-6 shadow-[0_18px_60px_rgba(43,46,51,0.12)] backdrop-blur-xl">
-              <div className="flex flex-col gap-2 text-base">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="font-semibold">Статус:</span>
-                  <span
-                    className={`rounded-xl px-3 py-1.5 font-semibold ${
-                      state === "loading"
-                        ? "bg-black/5 text-[#2B2E33]"
-                        : "bg-emerald-500/10 text-emerald-700"
-                    }`}
-                  >
-                    {state === "loading" ? "Проверяем..." : "Готово к работе"}
-                  </span>
-                </div>
-                <div className="h-px w-full bg-black/5" />
+            <p className="max-w-md text-base leading-7 text-[#68707d]">
+              Авторизуйтесь, чтобы просматривать заявки, управлять доступом и
+              менять роли пользователей.
+            </p>
+
+            <div className="panel grid gap-4 p-5">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-bold text-[#68707d]">
+                  Состояние
+                </span>
+                <span
+                  className={`badge ${
+                    state === "loading" ? "badge-warning" : "badge-success"
+                  }`}
+                >
+                  {state === "loading" ? "Проверяем" : "Готово"}
+                </span>
+              </div>
+              <div className="h-px bg-[#edf0f4]" />
+              <div className="text-sm leading-6 text-[#68707d]">
+                Доступ разрешен только администраторам. После входа вы
+                автоматически вернетесь на запрошенную страницу.
               </div>
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-white/55 bg-white/40 p-6 shadow-[0_20px_80px_rgba(43,46,51,0.14)] backdrop-blur-2xl md:p-8">
+          <div className="surface rounded-[24px] p-6 md:p-8">
             <div className="mb-6">
-              <h2 className="text-2xl font-extrabold">Авторизация</h2>
+              <h2 className="text-2xl font-black">Авторизация</h2>
+              <p className="mt-1 text-sm font-medium text-[#68707d]">
+                Введите рабочую почту и пароль.
+              </p>
             </div>
 
             <form onSubmit={onSubmit} className="space-y-5">
               <div className="space-y-2">
-                <label className="text-base font-semibold">Email</label>
+                <label className="text-sm font-bold text-[#343941]">
+                  Email
+                </label>
                 <input
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="gftacomp@gmail.com"
-                  className="h-12 w-full rounded-2xl border border-[#C1C4C8]/60 bg-white/55 px-4 text-lg outline-none ring-0 transition focus:border-[#2B2E33]/50 focus:bg-white/70"
+                  className="field"
                   autoComplete="email"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-base font-semibold">Пароль</label>
+                <label className="text-sm font-bold text-[#343941]">
+                  Пароль
+                </label>
                 <div className="flex items-center gap-3">
                   <input
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     type={showPass ? "text" : "password"}
                     placeholder="••••••••"
-                    className="h-12 w-full rounded-2xl border border-[#C1C4C8]/60 bg-white/55 px-4 text-lg outline-none transition focus:border-[#2B2E33]/50 focus:bg-white/70"
+                    className="field"
                     autoComplete="current-password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPass((v) => !v)}
-                    className="h-12 shrink-0 rounded-2xl border border-[#C1C4C8]/60 bg-white/55 px-4 text-base font-semibold text-[#2B2E33] transition hover:bg-white/70 active:scale-[0.99]"
+                    className="btn btn-secondary shrink-0"
                   >
                     {showPass ? "Скрыть" : "Показать"}
                   </button>
@@ -117,15 +142,12 @@ export default function LoginClient() {
               </div>
 
               {error && (
-                <div className="rounded-2xl border border-red-500/25 bg-red-500/10 p-4 text-base font-semibold text-red-700">
+                <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
                   {error}
                 </div>
               )}
 
-              <button
-                disabled={!canSubmit}
-                className="h-12 w-full rounded-2xl bg-[#2B2E33] text-lg font-extrabold text-white shadow-[0_18px_40px_rgba(43,46,51,0.22)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-              >
+              <button disabled={!canSubmit} className="btn btn-primary w-full">
                 {state === "loading" ? "Входим..." : "Войти"}
               </button>
             </form>

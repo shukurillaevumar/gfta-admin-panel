@@ -2,7 +2,7 @@
 export type ApiError = {
   error?: string;
   message?: string;
-  details?: any;
+  details?: unknown;
 };
 
 async function readError(res: Response): Promise<string> {

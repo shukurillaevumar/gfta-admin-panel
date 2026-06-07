@@ -1,27 +1,34 @@
-// app/page.tsx
 import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#0b1622] text-white flex items-center justify-center p-6">
-      <div className="max-w-xl w-full rounded-3xl border border-white/10 bg-white/5 p-8">
-        <h1 className="text-3xl font-extrabold">Anti-scam</h1>
-        <p className="mt-3 text-white/70">
-          Secure access portal. Please sign in to continue.
-        </p>
+    <main className="app-shell flex min-h-screen items-center justify-center p-6">
+      <div className="surface w-full max-w-2xl rounded-[24px] p-8 md:p-10">
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#17191d] text-sm font-black text-white">
+              G
+            </div>
+            <div>
+              <div className="text-lg font-black">GFTA Admin</div>
+              <div className="text-sm font-medium text-[#68707d]">
+                Панель контроля доступа
+              </div>
+            </div>
+          </div>
+          <span className="badge badge-success">Online</span>
+        </div>
 
-        <div className="mt-6 flex gap-3">
-          <Link
-            href="/login"
-            className="rounded-xl bg-white text-black px-4 py-2 font-semibold"
-          >
-            Sign in
+        <h1 className="max-w-xl text-4xl font-black leading-tight tracking-tight md:text-5xl">
+          Управление заявками и пользователями
+        </h1>
+
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Link href="/login" className="btn btn-primary min-w-36">
+            Войти
           </Link>
-          <Link
-            href="/admin"
-            className="rounded-xl border border-white/15 px-4 py-2 font-semibold text-white/90"
-          >
-            Admin
+          <Link href="/admin" className="btn btn-secondary min-w-36">
+            Открыть админку
           </Link>
         </div>
       </div>
